@@ -50,7 +50,6 @@ app.delete('/todos/:id', (req, res) => {
     }).catch((e) => {
       if (e) return res.status(400).send();
     });
-
 });
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
