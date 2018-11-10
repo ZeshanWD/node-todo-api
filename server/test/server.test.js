@@ -254,18 +254,17 @@ describe('POST /users/login', () => {
     request(app)
       .post('users/login')
       .send({
-        email: user[1].email,
+        email: users[1].email,
         password: users[1].password
       })
       .expect(200)
       .expect(res => {
         expect(res.headers['x-auth']).toExist();
       })
-      .end((err) => {
+      .end((err, res) => {
         if (err) done(err);
-
         User.findById(users[1]._id).then(user => {
-          expect(users.tokens[0]).toInclude({
+          expect(user.tokens[1]).toInclude({
             access: 'auth',
             token: res.headers['x-auth'],
           });
@@ -278,7 +277,7 @@ describe('POST /users/login', () => {
     request(app)
       .post('users/login')
       .send({
-        email: user[1].email,
+        email: users[1].email,
         password: 'gamnasgd23'
       })
       .expect(400)
@@ -289,6 +288,23 @@ describe('POST /users/login', () => {
         if (err) done(err);
 
         User.findById(users[1]._id).then(user => {
+          expect(user.tokens.length).toBe(0);
+          done();
+        }).catch(err => done(err));
+      });
+  });
+});
+
+describe('DELETE /users/me/token', () => {
+  it('it should remove auth token on logout', done => {
+    request(app)
+      .delete('users/me/token')
+      .set('x-auth', users[0].tokens[0].token)
+      .expect(200)
+      .end((err) => {
+        if (err) done(err);
+
+        User.findById(users[0]._id).then(user => {
           expect(users.tokens.length).toBe(0);
           done();
         }).catch(err => done(err));

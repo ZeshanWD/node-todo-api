@@ -101,7 +101,7 @@ app.post('/users/login', (req, res) => {
     .then(user => {
       return user.generateAuthToken().then(token => {
         res.header('x-auth', token).send(user);
-      })
+      });
     }).catch((e) => {
       res.status(400).send();
     });
@@ -110,11 +110,8 @@ app.post('/users/login', (req, res) => {
 app.delete('/users/me/token', authenticate, (req, res) => {
   const user = req.user;
 
-  console.log("Im here");
-
   user.removeToken(req.token)
-    .then((res) => {
-      console.log("response remove token", res);
+    .then(() => {
       res.status(200).send();
     }, () => {
       res.status(400).send();
