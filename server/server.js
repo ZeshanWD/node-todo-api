@@ -107,6 +107,20 @@ app.post('/users/login', (req, res) => {
     });
 });
 
+app.delete('/users/me/token', authenticate, (req, res) => {
+  const user = req.user;
+
+  console.log("Im here");
+
+  user.removeToken(req.token)
+    .then((res) => {
+      console.log("response remove token", res);
+      res.status(200).send();
+    }, () => {
+      res.status(400).send();
+    });
+});
+
 app.listen(port, () => console.log(`Server started on port ${port}`));
 
 module.exports = {
